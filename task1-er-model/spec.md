@@ -1,30 +1,31 @@
 Сутності та їх атрибути: 
 
-CUSTOMER (name, e-mail, phone, address)
-PRODUCT (description, quantity, productprice)
-ORDER (orderid, status, orderprice)
+CUSTOMER (id, name, email, phone, address)
+PRODUCT (id, name, description, price, stock_quantity)
+ORDER (id, customer_id (FK), order_date, status, shipping)
 
 erDiagram
     
     CUSTOMER {
-        string custid
-        string name
-        string email
-        string phone
-        string address
+        id
+        name
+        email
+        phone
+        address
     }
 
     ORDER {
-        string orderid
-        string status
-        string orderprice
+        id
+        customer_id (FK)
+        order_date
+        status
+        shipping
     }
 
     PRODUCT {
-        string description
-        string quantity
-        string productprice
+        id
+        name
+        description
+        price
+        stock_quantity
     }
-
-    CUSTOMER ||--o{ ORDER : places
-    ORDER ||--|{ PRODUCT : places
