@@ -3,29 +3,40 @@
 CUSTOMER (id, name, email, phone, address)
 PRODUCT (id, name, description, price, stock_quantity)
 ORDER (id, customer_id (FK), order_date, status, shipping)
+ADDRESS (id, customer_id (FK), street, city, postal_code, country, type shipping)
 
 erDiagram
     
     CUSTOMER {
-        id
+        id (PK)
         name
         email
         phone
-        address
     }
 
     ORDER {
-        id
+        id PK
         customer_id (FK)
         order_date
         status
         shipping
+        shipping_address_id (FK)
     }
 
     PRODUCT {
-        id
+        id (PK)
         name
         description
         price
         stock_quantity
+    }
+
+    ADDRESS {
+        id 
+        customer_id (FK) 
+        street
+        city 
+        postal_code 
+        country 
+        type shipping
     }
