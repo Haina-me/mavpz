@@ -4,6 +4,9 @@ CUSTOMER (id, name, email, phone, address)
 PRODUCT (id, name, description, price, stock_quantity)
 ORDER (id, customer_id (FK), order_date, status, shipping)
 ADDRESS (id, customer_id (FK), street, city, postal_code, country, type shipping)
+PAYMENT (id (PK), customer_id (FK), card details)
+ORDER_PRODUCT (id, order_id (FK), product_id (FK), quantity)
+
 
 erDiagram
     
@@ -32,11 +35,23 @@ erDiagram
     }
 
     ADDRESS {
-        id 
+        id (PK)
         customer_id (FK) 
         street
         city 
         postal_code 
         country 
         type shipping
+    }
+
+    PAYMENT {
+        id (PK) 
+        customer_id (FK) 
+        card details
+    }
+        
+    ORDER_PRODUCT {
+        id, order_id (FK) 
+        product_id (FK)
+        quantity
     }
