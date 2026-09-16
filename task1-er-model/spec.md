@@ -7,15 +7,17 @@ ADDRESS (id, customer_id (FK), street, city, postal_code, country, shipping)
 PAYMENT_DATA (id (PK), customer_id (FK), card_type, card_namber, card_CVV)
 ORDER_PRODUCT (id, order_id (FK), product_id (FK), quantity, fix_price)
 
-CUSTOMER ||--o{ ORDER
-CUSTOMER ||--o{ ADDRESS
-CUSTOMER ||--o{ PAYMENT_DATA
-ORDER }o--|| ADDRESS
-ORDER }o--|| PAYMENT_DATA
-ORDER ||--o{ ORDER_PRODUCT
 
 erDiagram
-    
+
+    CUSTOMER ||--o{ ORDER : ""
+    CUSTOMER ||--o{ ADDRESS : ""
+    CUSTOMER ||--o{ PAYMENT_DATA : ""
+    ORDER }o--|| ADDRESS : ""
+    ORDER }o--|| PAYMENT_DATA : ""
+    ORDER ||--o{ ORDER_PRODUCT : ""
+    PRODUCT ||--o{ ORDER_PRODUCT : ""
+
     CUSTOMER {
         int id PK
         string name
