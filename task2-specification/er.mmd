@@ -1,0 +1,92 @@
+erDiagram
+    customer {
+        int customer_id PK
+        varchar name
+        varchar email UK
+        varchar password_hash
+        varchar phone
+        varchar role
+        int failed_login_count
+        timestamp locked_until
+        timestamp created_at
+    }
+    address {
+        int address_id PK
+        int customer_id FK
+        varchar country
+        varchar city
+        varchar street
+        varchar postal_code
+        boolean is_active
+        timestamp created_at
+    }
+    payment_method {
+        int payment_method_id PK
+        int customer_id FK
+        varchar card_type
+        varchar card_mask
+        varchar expiration_date
+        varchar bank_token
+        boolean is_active
+        timestamp created_at
+    }
+    category {
+        int category_id PK
+        varchar name UK
+    }
+    product {
+        int product_id PK
+        int category_id FK
+        varchar name
+        text description
+        decimal price
+        int stock_quantity
+    }
+    cart {
+        int cart_id PK
+        int customer_id UK
+        timestamp updated_at
+    }
+    cart_item {
+        int cart_id PK, FK
+        int product_id PK, FK
+        int quantity
+    }
+    orders {
+        int order_id PK
+        int customer_id FK
+        int shipping_address_id FK
+        varchar shipping_address_text
+        varchar shipping_method
+        decimal total_amount
+        varchar status
+        timestamp order_date
+    }
+    order_item {
+        int order_id PK, FK
+        int product_id PK, FK
+        int quantity
+        decimal price_at_purchase
+    }
+    payment {
+        int payment_id PK
+        int order_id FK
+        int payment_method_id FK
+        decimal amount
+        varchar status
+        varchar bank_transaction_id
+        timestamp created_at
+    }
+
+    customer ||--o{ address : "зберігає"
+    customer ||--o{ payment_method : "зберігає"
+    customer ||--o| cart : "має"
+    customer ||--o{ orders : "робить"
+    category ||--o{ product : "містить"
+    cart ||--o{ cart_item : "містить"
+    product ||--o{ cart_item : "лежить у"
+    address ||--o{ orders : "доставка на"
+    orders ||--|{ order_item : "містить"
+    product ||--o{ order_item : "входить до"
+    orders ||--o{ payment : "оплачується"
+    payment_method ||--o{ payment : "використовується в"
