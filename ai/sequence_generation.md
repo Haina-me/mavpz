@@ -12,8 +12,10 @@
 > Activation bars (ЖОРСТКА ВИМОГА): Лінія життя (activate / deactivate) учасника, що працює поза фрагментом, має починатися ДО фрагмента і закінчуватися ПІСЛЯ нього. Жодних обривів, дублювань чи deactivate всередині окремих  гілок alt чи opt! 
 
 **Результат від AI:**
+
+**Для КП1:**
 ```mermaid
-[sequenceDiagram
+sequenceDiagram
     autonumber
     actor User as Покупець
     participant Frontend
@@ -56,4 +58,32 @@
         User ->> Frontend: Обирає збережену адресу
         User ->> Frontend: Обирає збережений спосіб оплати
     end
-    deactivate Frontend]
+    deactivate Frontend
+```
+**Для КП2:**
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Покупець
+    participant Frontend
+    participant Backend
+
+    User ->> Frontend: Натискає "Підтвердити замовлення" (дані не обрано)
+    activate Frontend
+    
+    Frontend ->> Backend: createOrder(customer_id, address_id=null, payment_id=null)
+    activate Backend
+    
+    alt is missing address or payment method
+        Backend -->> Frontend: 400 Bad Request (Validation Error)
+    else parameters are valid
+        Note over Backend: Продовження процесу (не в цьому сценарії)
+    end
+    
+    deactivate Backend
+
+    Frontend -->> User: Показує повідомлення про необхідність обрати дані
+    
+    deactivate Frontend
+```
+

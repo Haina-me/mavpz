@@ -1,0 +1,27 @@
+%%Підтвердження без адреси та способу оплати KП2
+
+sequenceDiagram
+    autonumber
+    actor User as Покупець
+    participant Frontend
+    participant Backend
+
+    User ->> Frontend: Натискає "Підтвердити замовлення" (дані не обрано)
+    activate Frontend
+    
+    Frontend ->> Backend: createOrder(customer_id, address_id=null, payment_id=null)
+    activate Backend
+    
+    alt is missing address or payment method
+        Backend -->> Frontend: 400 Bad Request (Validation Error)
+    else parameters are valid
+        Note over Backend: Продовження процесу (не в цьому сценарії)
+    end
+    
+    deactivate Backend
+
+    Frontend -->> User: Показує повідомлення про необхідність обрати дані
+    
+    deactivate Frontend
+
+
