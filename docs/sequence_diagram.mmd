@@ -1,0 +1,46 @@
+%%Відкриття сторінки оформлення та вибір даних
+
+sequenceDiagram
+    autonumber
+    actor User as Покупець
+    participant Frontend
+    participant Backend
+    participant Cart as БД: Cart
+    participant Address as БД: Address
+    participant PaymentMethod as БД: PaymentMethod
+
+    User ->> Frontend: Натискає "Оформити замовлення"
+    activate Frontend
+    
+    Frontend ->> Backend: getCheckoutData(customer_id)
+    activate Backend
+    
+    Backend ->> Cart: getCartItems(customer_id)
+    activate Cart
+    Cart -->> Backend: items (List<CartItem>)
+    deactivate Cart
+    
+    alt cart has items
+        Backend ->> Address: getActiveAddresses(customer_id)
+        activate Address
+        Address -->> Backend: addressList
+        deactivate Address
+        
+        Backend ->> PaymentMethod: getActivePaymentMethods(customer_id)
+        activate PaymentMethod
+        PaymentMethod -->> Backend: paymentList
+        deactivate PaymentMethod
+        
+        Backend -->> Frontend: 200 OK (items, addressList, paymentList)
+    else cart is empty
+        Backend -->> Frontend: 400 Bad Request (Cart is empty)
+    end
+    deactivate Backend
+
+    Frontend -->> User: Відкриває сторінку оформлення
+
+    opt User selects existing data
+        User ->> Frontend: Обирає збережену адресу
+        User ->> Frontend: Обирає збережений спосіб оплати
+    end
+    deactivate Frontend
