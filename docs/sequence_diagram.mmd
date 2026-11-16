@@ -1,4 +1,4 @@
-%%Відкриття сторінки оформлення та вибір даних
+%%Відкриття сторінки оформлення та вибір даних КП1
 
 sequenceDiagram
     autonumber
@@ -20,27 +20,23 @@ sequenceDiagram
     Cart -->> Backend: items (List<CartItem>)
     deactivate Cart
     
-    alt cart has items
-        Backend ->> Address: getActiveAddresses(customer_id)
-        activate Address
-        Address -->> Backend: addressList
-        deactivate Address
-        
-        Backend ->> PaymentMethod: getActivePaymentMethods(customer_id)
-        activate PaymentMethod
-        PaymentMethod -->> Backend: paymentList
-        deactivate PaymentMethod
-        
-        Backend -->> Frontend: 200 OK (items, addressList, paymentList)
-    else cart is empty
-        Backend -->> Frontend: 400 Bad Request (Cart is empty)
-    end
+    Backend ->> Address: getActiveAddresses(customer_id)
+    activate Address
+    Address -->> Backend: addressList
+    deactivate Address
+    
+    Backend ->> PaymentMethod: getActivePaymentMethods(customer_id)
+    activate PaymentMethod
+    PaymentMethod -->> Backend: paymentList
+    deactivate PaymentMethod
+    
+    Backend -->> Frontend: 200 OK (items, addressList, paymentList)
     deactivate Backend
-
-    Frontend -->> User: Відкриває сторінку оформлення
-
-    opt User selects existing data
-        User ->> Frontend: Обирає збережену адресу
-        User ->> Frontend: Обирає збережений спосіб оплати
+    
+    Frontend -->> User: Відкриває сторінку оформлення (дані підставлені)
+    
+    opt Вибір/зміна збережених даних
+        User ->> Frontend: Обирає адресу зі списку
+        User ->> Frontend: Обирає спосіб оплати зі списку
     end
     deactivate Frontend
