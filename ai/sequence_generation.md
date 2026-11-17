@@ -14,7 +14,7 @@
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User as Покупець
+    actor User as Користувач
     participant Frontend
     participant Backend
     participant Cart as БД: Cart
@@ -61,7 +61,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User as Покупець
+    actor User as Користувач
     participant Frontend
     participant Backend
 
@@ -88,7 +88,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User as Покупець
+    actor User as Користувач
     participant Frontend
     participant Backend
     participant Bank as Bank (Шлюз)
@@ -154,7 +154,7 @@ And товар "Телефон" залишається в моєму кошик�
 ``` mermaid
 sequenceDiagram
     autonumber
-    actor User as Покупець
+    actor User as Користувач
     participant Frontend
     participant Backend
     participant Bank as Bank (Шлюз)
