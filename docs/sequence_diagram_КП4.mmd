@@ -1,11 +1,11 @@
 sequenceDiagram
     autonumber
-    actor User as Покупець
+    actor User as Користувач
     participant Frontend
     participant Backend
     participant Bank as Bank (Шлюз)
-
-    User ->> Frontend: Підтверджує замовлення (обрано адресу та оплату)
+    
+    User ->> Frontend: Натискає "Підтвердити замовлення"
     activate Frontend
     
     Frontend ->> Backend: checkout(customer_id, address_id, payment_method_id)
@@ -13,16 +13,14 @@ sequenceDiagram
     
     Backend ->> Bank: processPayment(amount, bank_token)
     activate Bank
-    Bank -->> Backend: 403 Forbidden / Payment Declined
+    Bank -->> Backend: 403 Payment Declined (Відмова)
     deactivate Bank
     
-    alt payment is declined
-        Note over Backend: Запит до БД Orders не виконується
-        Note over Backend: Кошик залишається без змін (не очищується)
-        Backend -->> Frontend: 402 Payment Required (Declined by Bank)
+    opt Обробка відхиленого платежу
+
+        
+        Backend -->> Frontend: 402 Payment Required (Declined)
         Frontend -->> User: Показує повідомлення про відмову в оплаті
-    else payment is successful
-        Note over Backend: Успішне створення замовлення (див. Сценарій 3)
     end
     
     deactivate Backend
