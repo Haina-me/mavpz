@@ -7,10 +7,11 @@ sequenceDiagram
     participant Backend
     participant Bank as Bank (Шлюз)
     participant Orders as БД: Orders
+    participant OrderItem as БД: order_item
     participant Payment as БД: Payment
-    participant Cart as БД: Cart
+    participant Cart as БД: cart_item
 
-    User ->> Frontend: Підтверджує замовлення (обрано адресу та оплату)
+    User ->> Frontend: Натискає "Підтвердити замовлення"
     activate Frontend
     
     Frontend ->> Backend: checkout(customer_id, address_id, payment_method_id)
@@ -18,31 +19,33 @@ sequenceDiagram
     
     Backend ->> Bank: processPayment(amount, bank_token)
     activate Bank
-    Bank -->> Backend: 200 OK (transaction_id)
+    Bank -->> Backend: 200 OK (transaction_id, status="success")
     deactivate Bank
     
-    alt payment is successful
-        Backend ->> Orders: insertOrder(customer_id, address_id, total_amount)
-        activate Orders
-        Orders -->> Backend: order_id
-        deactivate Orders
-        
-        Backend ->> Payment: recordPayment(order_id, payment_method_id, amount, status="success")
-        activate Payment
-        Payment -->> Backend: payment_id
-        deactivate Payment
-        
-        Backend ->> Cart: clearCart(customer_id)
-        activate Cart
-        Cart -->> Backend: success (кошик очищено)
-        deactivate Cart
-        
-        Backend -->> Frontend: 200 OK (Order Created)
-        Frontend -->> User: Показує сторінку успішного оформлення
-    else payment is failed
-        Backend -->> Frontend: 402 Payment Required
-        Frontend -->> User: Показує повідомлення про відмову в оплаті
+    Backend ->> Orders: insertOrder(customer_id, address_id, total_amount)
+    activate Orders
+    Orders -->> Backend: order_id
+    deactivate Orders
+    
+    loop Для кожного товару з кошика (вкл. "Телефон")
+        Backend ->> OrderItem: insertOrderItem(order_id, product_id, quantity, price)
+        activate OrderItem
+        OrderItem -->> Backend: success
+        deactivate OrderItem
     end
     
+    Backend ->> Payment: recordPayment(order_id, payment_method_id, transaction_id)
+    activate Payment
+    Payment -->> Backend: payment_id
+    deactivate Payment
+    
+    Backend ->> Cart: deleteCartItems(customer_id)
+    activate Cart
+    Cart -->> Backend: success (кошик порожній)
+    deactivate Cart
+    
+    Backend -->> Frontend: 200 OK (Order Created)
     deactivate Backend
+    
+    Frontend -->> User: Показує сторінку успішного оформлення
     deactivate Frontend
