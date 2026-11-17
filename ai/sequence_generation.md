@@ -133,3 +133,52 @@ sequenceDiagram
     deactivate Backend
     deactivate Frontend
 ```
+
+**Мій запит:** 
+>Сценарій для четвертої діаграми: 
+Scenario: Банк відхиляє платіж
+Given я на сторінці оформлення
+And я обрав адресу "Київ, вул. Хрещатик, 1"
+And я обрав спосіб оплати "Картка *1234"
+When я підтверджую замовлення
+And банк відхиляє платіж
+Then я бачу повідомлення про відмову в оплаті
+And замовлення не створюється
+And товар "Телефон" залишається в моєму кошику
+Виконай діаграму точно по сценарію. Колишні вимоги зберігаються 
+
+
+**Результат від AI:**
+
+**Для КП4:**
+``` mermaid
+sequenceDiagram
+    autonumber
+    actor User as Покупець
+    participant Frontend
+    participant Backend
+    participant Bank as Bank (Шлюз)
+
+    User ->> Frontend: Підтверджує замовлення (обрано адресу та оплату)
+    activate Frontend
+    
+    Frontend ->> Backend: checkout(customer_id, address_id, payment_method_id)
+    activate Backend
+    
+    Backend ->> Bank: processPayment(amount, bank_token)
+    activate Bank
+    Bank -->> Backend: 403 Forbidden / Payment Declined
+    deactivate Bank
+    
+    alt payment is declined
+        Note over Backend: Запит до БД Orders не виконується
+        Note over Backend: Кошик залишається без змін (не очищується)
+        Backend -->> Frontend: 402 Payment Required (Declined by Bank)
+        Frontend -->> User: Показує повідомлення про відмову в оплаті
+    else payment is successful
+        Note over Backend: Успішне створення замовлення (див. Сценарій 3)
+    end
+    
+    deactivate Backend
+    deactivate Frontend
+```
