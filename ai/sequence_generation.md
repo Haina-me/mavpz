@@ -86,4 +86,53 @@ sequenceDiagram
     
     deactivate Frontend
 ```
+**Для КП3:**
 
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Покупець
+    participant Frontend
+    participant Backend
+    participant Bank as Bank (Шлюз)
+    participant Orders as БД: Orders
+    participant Payment as БД: Payment
+    participant Cart as БД: Cart
+
+    User ->> Frontend: Підтверджує замовлення (обрано адресу та оплату)
+    activate Frontend
+    
+    Frontend ->> Backend: checkout(customer_id, address_id, payment_method_id)
+    activate Backend
+    
+    Backend ->> Bank: processPayment(amount, bank_token)
+    activate Bank
+    Bank -->> Backend: 200 OK (transaction_id)
+    deactivate Bank
+    
+    alt payment is successful
+        Backend ->> Orders: insertOrder(customer_id, address_id, total_amount)
+        activate Orders
+        Orders -->> Backend: order_id
+        deactivate Orders
+        
+        Backend ->> Payment: recordPayment(order_id, payment_method_id, amount, status="success")
+        activate Payment
+        Payment -->> Backend: payment_id
+        deactivate Payment
+        
+        Backend ->> Cart: clearCart(customer_id)
+        activate Cart
+        Cart -->> Backend: success (кошик очищено)
+        deactivate Cart
+        
+        Backend -->> Frontend: 200 OK (Order Created)
+        Frontend -->> User: Показує сторінку успішного оформлення
+    else payment is failed
+        Backend -->> Frontend: 402 Payment Required
+        Frontend -->> User: Показує повідомлення про відмову в оплаті
+    end
+    
+    deactivate Backend
+    deactivate Frontend
+```
